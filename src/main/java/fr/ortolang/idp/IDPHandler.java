@@ -2,7 +2,6 @@ package fr.ortolang.idp;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,13 +25,13 @@ public class IDPHandler extends DefaultHandler {
         idps = new HashMap<String, IDPRepresentation>();
     }
 
-    public Collection<IDPRepresentation> getIdps() {
-        return idps.values();
+    public Map<String, IDPRepresentation> getIdps() {
+        return idps;
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        if (qName.equals("md:EntityDescriptor")) {
+        if (qName.equals("md:EntityDescriptor") || qName.equals("EntityDescriptor")) {
             String entityId = atts.getValue("entityID");
             if (entityId != null) {
                 LOGGER.log(Level.FINEST, "Found new entity descriptor with entity ID: " + entityId);
@@ -66,7 +65,7 @@ public class IDPHandler extends DefaultHandler {
         if (current != null && qName.equals("ds:X509Certificate") && current.getCertificate() == null) {
             read = true;
         }
-        if (current != null && (qName.equals("md:SingleSignOnService") || qName.equals("md:AssertionConsumerService"))) {
+        if (current != null && (qName.equals("md:SingleSignOnService") || qName.equals("SingleSignOnService") || qName.equals("md:AssertionConsumerService") || qName.equals("AssertionConsumerService"))) {
             String binding = atts.getValue("Binding");
             String location = atts.getValue("Location");
             if ( binding != null && binding.equals("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") ) {
@@ -77,7 +76,7 @@ public class IDPHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (qName.equals("md:EntityDescriptor")) {
+        if (qName.equals("md:EntityDescriptor") || qName.equals("EntityDescriptor")) {
             LOGGER.log(Level.FINEST, "EntityDescriptor added to list : \r\n" + current.toString());
             idps.put(current.getAlias(), current);
             current = null;

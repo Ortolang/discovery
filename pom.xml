@@ -27,6 +27,7 @@
 		<version.wildfly>9.0.1.Final</version.wildfly>
 		<version.javax.javaee>7.0</version.javax.javaee>
 		<version.commons.codec>1.10</version.commons.codec>
+		<version.httpclient>4.3.6</version.httpclient>
 	</properties>
 
 	<build>
@@ -37,11 +38,11 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-					</archive>
-				</configuration>
+						<manifestEntries>
+                        	<Dependencies>org.apache.httpcomponents</Dependencies>
+                    	</manifestEntries>
+                	</archive>
+            	</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.wildfly.plugins</groupId>
@@ -95,6 +96,12 @@
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-adapter-core</artifactId>
 			<version>${version.keycloak}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${version.httpclient}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

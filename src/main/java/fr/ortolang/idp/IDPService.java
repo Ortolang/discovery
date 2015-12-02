@@ -9,4 +9,6 @@ public interface IDPService {
     
     public Collection<IDPRepresentation> listIDPs();
     
+    public void updateIDPs();
+    
 }
