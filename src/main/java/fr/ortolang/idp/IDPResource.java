@@ -17,7 +17,7 @@ public class IDPResource {
     private IDPService service;
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Collection<IDPRepresentation> listIDPs() {
         return service.listIDPs();
     }

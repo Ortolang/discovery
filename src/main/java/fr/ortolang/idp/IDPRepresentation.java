@@ -2,8 +2,14 @@ package fr.ortolang.idp;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
+@XmlRootElement(name="idp")
+@XmlType(name="idp", propOrder={"entityId", "alias", "name", "description", "registrationDate", "ssoURL", "logo"})
 public class IDPRepresentation {
 
     private String entityId;
@@ -59,6 +65,7 @@ public class IDPRepresentation {
         this.logo = logo;
     }
 
+    @XmlTransient
     public String getCertificate() {
         return certificate;
     }
