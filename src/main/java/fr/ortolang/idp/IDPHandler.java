@@ -78,7 +78,9 @@ public class IDPHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("md:EntityDescriptor") || qName.equals("EntityDescriptor")) {
             LOGGER.log(Level.FINEST, "EntityDescriptor added to list : \r\n" + current.toString());
-            idps.put(current.getAlias(), current);
+            if ( current.getName() != null && current.getSsoURL() != null && current.getAlias() != null ) {
+                idps.put(current.getAlias(), current);
+            }
             current = null;
         }
         if (read) {
