@@ -38,6 +38,32 @@ public class IDPResource {
     }
 
     @GET
+    @Path("config")
+    public String getConfig() {
+        StringBuffer xml = new StringBuffer();
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        xml.append("<md:EntitiesDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" xmlns:dsig=\"http://www.w3.org/2000/09/xmldsig#\" cacheDuration=\"PT1H\">");
+        xml.append("<md:EntityDescriptor entityID=\"https://auth-int.ortolang.fr:8443/auth/realms/ortolang\">");
+        xml.append("<md:SPSSODescriptor AuthnRequestsSigned=\"true\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext\">");
+        int cpt = 0;
+        for ( IDPRepresentation idp : service.listIDPs() ) {
+            cpt++;
+            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://auth-int.ortolang.fr:8443/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
+        }
+        xml.append("<md:KeyDescriptor use=\"signing\">");
+        xml.append("<dsig:KeyInfo>");
+        xml.append("<dsig:X509Data>");
+        xml.append("<dsig:X509Certificate>MIICnzCCAYcCBgFO36Y8szANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhvcnRvbGFuZzAeFw0xNTA3MzAxNTQ2MzBaFw0yNTA3MzAxNTQ4MTBaMBMxETAPBgNVBAMMCG9ydG9sYW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg8Wj2XtSr/l8OREO2Ay/B6OLeqIBSFSjL92P1MANWLijpjHFHi99dS4j732yXqQbYQED4R2c2FNMV8Tkhrm+34/P0JGxJWCO9OYLprQ2u5A+0z3UB+ITM1EvymDYA5sGX8VtXj6yiniAQwGOwUefFNIS1BRoPr3BJ5av+ehO1lLgpbPRtkGISehtxoYFjM9UEvzk8YObeuz1EdaiOuZJnwwAGxqJ/c54Wii2IjWb2dtXWtvbsUJLxSjFKbHrpk45tT/JiWfcXc0P7EUEnRs8WmfgFL2M0fJGF8y2o++gHeHmRycpsr7bvlVtkE23Fp1k6aJSEAhBffmwz4gY9XX4FQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA9NpF9N2I08YIuAvvT81Pih2Wg4qsFdTSH3E/ulYo/R8Du2eW/OnIuis6XqBz6MG5wI12TNJfxuBMEXlXZY1e69WblrqDbyGYnN5fm83lORd+xi+p5dYBad8KoxfgnIinRaxYNyuZPxwYpkntT0eHEKvt5jtXzDCXev9Asfnl0yxqTehTHovV2wNgp3xCQoD6N4aRXRwTpsfc/CQ7Mauyv0fci5T+ax4Ut5IFsNSgTWs64yYVIIrv+erztWkpGAixr7k5XIrQAJYMjTZvgmMogueKwqH0v2Lv0jMn+F5qjrBH8L1E0nY0KuEtSOhTq4TNn1bzZ2taNNv9daZuscX0h</dsig:X509Certificate>");
+        xml.append("</dsig:X509Data>");
+        xml.append("</dsig:KeyInfo>");
+        xml.append("</md:KeyDescriptor>");
+        xml.append("</md:SPSSODescriptor>");
+        xml.append("</md:EntityDescriptor>");
+        xml.append("</md:EntitiesDescriptor>");
+        return xml.toString();
+    }
+
+    @GET
     @Path("/endpoint")
     public void getCallback(@Context HttpServletRequest request, @Context HttpServletResponse response) {
         LOGGER.log(Level.INFO, "GET /idps/endpoint");
@@ -50,7 +76,7 @@ public class IDPResource {
         LOGGER.log(Level.INFO, "POST /idps/endpoint");
         dumpRequest(request);
     }
-    
+
     private void dumpRequest(HttpServletRequest request) {
         LOGGER.log(Level.INFO, "REQUEST URI       =" + request.getRequestURI());
         LOGGER.log(Level.INFO, "          authType=" + request.getAuthType());
@@ -61,8 +87,7 @@ public class IDPResource {
         Cookie cookies[] = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++)
-                LOGGER.log(Level.INFO, "            cookie=" + cookies[i].getName() + "=" +
-                    cookies[i].getValue());
+                LOGGER.log(Level.INFO, "            cookie=" + cookies[i].getName() + "=" + cookies[i].getValue());
         }
         Enumeration hnames = request.getHeaderNames();
         while (hnames.hasMoreElements()) {
