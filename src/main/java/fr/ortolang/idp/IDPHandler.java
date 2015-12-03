@@ -50,12 +50,12 @@ public class IDPHandler extends DefaultHandler {
             }
         }
         if (current != null && qName.equals("mdui:DisplayName")) {
-            if ( atts.getValue("xml:lang") != null && atts.getValue("xml:lang").equals("fr") ) {
+            if (atts.getValue("xml:lang") != null && atts.getValue("xml:lang").equals("fr")) {
                 read = true;
             }
         }
         if (current != null && qName.equals("mdui:Description")) {
-            if ( atts.getValue("xml:lang") != null && atts.getValue("xml:lang").equals("fr") ) {
+            if (atts.getValue("xml:lang") != null && atts.getValue("xml:lang").equals("fr")) {
                 read = true;
             }
         }
@@ -65,10 +65,11 @@ public class IDPHandler extends DefaultHandler {
         if (current != null && qName.equals("ds:X509Certificate") && current.getCertificate() == null) {
             read = true;
         }
-        if (current != null && (qName.equals("md:SingleSignOnService") || qName.equals("SingleSignOnService") || qName.equals("md:AssertionConsumerService") || qName.equals("AssertionConsumerService"))) {
+        if (current != null
+                && (qName.equals("md:SingleSignOnService") || qName.equals("SingleSignOnService") || qName.equals("md:AssertionConsumerService") || qName.equals("AssertionConsumerService"))) {
             String binding = atts.getValue("Binding");
             String location = atts.getValue("Location");
-            if ( binding != null && binding.equals("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST") ) {
+            if (binding != null && binding.equals("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST")) {
                 current.setSsoURL(location);
             }
         }
@@ -78,22 +79,23 @@ public class IDPHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("md:EntityDescriptor") || qName.equals("EntityDescriptor")) {
             LOGGER.log(Level.FINEST, "EntityDescriptor added to list : \r\n" + current.toString());
-            if ( current.getName() != null && current.getSsoURL() != null && current.getAlias() != null ) {
+            if (current.getName() != null && current.getName().length() > 0 && current.getSsoURL() != null && current.getSsoURL().length() > 0 && current.getAlias() != null
+                    && current.getAlias().length() > 0) {
                 idps.put(current.getAlias(), current);
             }
             current = null;
         }
         if (read) {
-            if ( qName.equals("mdui:DisplayName") ) {
+            if (qName.equals("mdui:DisplayName")) {
                 current.setName(buffer.toString());
             }
-            if ( qName.equals("mdui:Description") ) {
+            if (qName.equals("mdui:Description")) {
                 current.setDescription(buffer.toString());
             }
-            if ( qName.equals("mdui:Logo") ) {
+            if (qName.equals("mdui:Logo")) {
                 current.setLogo(buffer.toString());
             }
-            if ( qName.equals("ds:X509Certificate") ) {
+            if (qName.equals("ds:X509Certificate")) {
                 current.setCertificate(buffer.toString());
             }
             read = false;
@@ -103,11 +105,9 @@ public class IDPHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if ( read ) {
+        if (read) {
             buffer.append(ch, start, length);
         }
     }
-    
-    
 
 }
