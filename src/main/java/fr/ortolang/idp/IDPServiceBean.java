@@ -30,8 +30,8 @@ import fr.ortolang.idp.KeycloakAdminClient.Failure;
 public class IDPServiceBean implements IDPService {
 
     private static final Logger LOGGER = Logger.getLogger(IDPServiceBean.class.getName());
-    //private static final String renaterIdps = "http://federation.renater.fr/renater/idps-renater-metadata.xml";
-    private static final String renaterIdps = "http://federation.renater.fr/test/renater-test-metadata.xml";
+    private static final String renaterIdps = "http://federation.renater.fr/renater/idps-renater-metadata.xml";
+    //private static final String renaterIdps = "http://federation.renater.fr/test/renater-test-metadata.xml";
 
     private Map<String, IDPRepresentation> idps;
 

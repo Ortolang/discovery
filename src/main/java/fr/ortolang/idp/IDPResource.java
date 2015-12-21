@@ -41,25 +41,23 @@ public class IDPResource {
     @Path("config")
     public String getConfig() {
         StringBuffer xml = new StringBuffer();
-        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        xml.append("<md:EntitiesDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" xmlns:dsig=\"http://www.w3.org/2000/09/xmldsig#\" cacheDuration=\"PT1H\">");
-        xml.append("<md:EntityDescriptor entityID=\"https://auth-int.ortolang.fr:8443/auth/realms/ortolang\">");
+        xml.append("<md:EntityDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" ID=\"_666acb6d4439006afef16dfd1a338b77\" entityID=\"https://auth.ortolang.fr:8443/auth/realms/ortolang\">");
         xml.append("<md:SPSSODescriptor AuthnRequestsSigned=\"true\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext\">");
         int cpt = 0;
         for ( IDPRepresentation idp : service.listIDPs() ) {
             cpt++;
-            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://auth-int.ortolang.fr:8443/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
+            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://auth.ortolang.fr:8443/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
         }
         xml.append("<md:KeyDescriptor use=\"signing\">");
-        xml.append("<dsig:KeyInfo>");
-        xml.append("<dsig:X509Data>");
-        xml.append("<dsig:X509Certificate>MIICnzCCAYcCBgFO36Y8szANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhvcnRvbGFuZzAeFw0xNTA3MzAxNTQ2MzBaFw0yNTA3MzAxNTQ4MTBaMBMxETAPBgNVBAMMCG9ydG9sYW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg8Wj2XtSr/l8OREO2Ay/B6OLeqIBSFSjL92P1MANWLijpjHFHi99dS4j732yXqQbYQED4R2c2FNMV8Tkhrm+34/P0JGxJWCO9OYLprQ2u5A+0z3UB+ITM1EvymDYA5sGX8VtXj6yiniAQwGOwUefFNIS1BRoPr3BJ5av+ehO1lLgpbPRtkGISehtxoYFjM9UEvzk8YObeuz1EdaiOuZJnwwAGxqJ/c54Wii2IjWb2dtXWtvbsUJLxSjFKbHrpk45tT/JiWfcXc0P7EUEnRs8WmfgFL2M0fJGF8y2o++gHeHmRycpsr7bvlVtkE23Fp1k6aJSEAhBffmwz4gY9XX4FQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA9NpF9N2I08YIuAvvT81Pih2Wg4qsFdTSH3E/ulYo/R8Du2eW/OnIuis6XqBz6MG5wI12TNJfxuBMEXlXZY1e69WblrqDbyGYnN5fm83lORd+xi+p5dYBad8KoxfgnIinRaxYNyuZPxwYpkntT0eHEKvt5jtXzDCXev9Asfnl0yxqTehTHovV2wNgp3xCQoD6N4aRXRwTpsfc/CQ7Mauyv0fci5T+ax4Ut5IFsNSgTWs64yYVIIrv+erztWkpGAixr7k5XIrQAJYMjTZvgmMogueKwqH0v2Lv0jMn+F5qjrBH8L1E0nY0KuEtSOhTq4TNn1bzZ2taNNv9daZuscX0h</dsig:X509Certificate>");
-        xml.append("</dsig:X509Data>");
-        xml.append("</dsig:KeyInfo>");
+        xml.append("<ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">");
+        xml.append("<ds:KeyName>auth.ortolang.fr</ds:KeyName>");
+        xml.append("<ds:X509Data>");
+        xml.append("<ds:X509Certificate>MIICnzCCAYcCBgFRxPn3xzANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhvcnRvbGFuZzAeFw0xNTEyMjExNDM2MzRaFw0yNTEyMjExNDM4MTRaMBMxETAPBgNVBAMMCG9ydG9sYW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj3hDFa3b77uDgalDKwLrvAlVSUxLwwL5pgl2d/0UDiaiRUjtqdrbhCQNEPA+ijDh2LzBDdC7FhabY3/gIj5hqI6zkWVWQoG98ONdn52jKCpQO5qjK1wcFnUqz4bfESxbc5vESfQ+MPzkqLC7gm8p5QrjJQgxXbyEEQxBCI0jWb+tUHsQAis3IzoNAsuXr5a9qm9wF+mP/VzB3WGCbJOP+7WwwngN3iN4Ykq96nqR1A/3c/CrtygeVtalYxEFzK9g1qk+q6/q5vyF1PSaThmbW4kgXktvXICDgFEr2/tC+JXQt6pH65tqjc2Inqw/N6QwOdjkmF8BHjFPyxudRMRPZwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQABq2zafrSRBzyTpPEoYwPPxzobYfIavIoLbKhpJq+7dHWJMvU2PhJlmE3HnBi05wr2Xhf3LNQJ1N2Si3wHUAGK4tSxw+wXQOLvCuo/5mjRG0CTzyj0rrWZR0/5Ogn0+f1wheUOtC6U0X2woWfdsbgronX3CqGh2B73m5SbyD4Ul8EoxMlpnNmh9hd54HH2YNvKS2JrMhPaHSibVJyHuQND3CxlhpobozWzcng4J4QvMGxgrEBUDdYg8jY86lS4JZUUiuVoVTlV0yKSkbsUSgb/ZeBP+bUARUAnrAHptCxQRW0FVHxkCFj7wmPdQsIe2eNO8lvEQbABKsvG8xGQTboO</ds:X509Certificate>");
+        xml.append("</ds:X509Data>");
+        xml.append("</ds:KeyInfo>");
         xml.append("</md:KeyDescriptor>");
         xml.append("</md:SPSSODescriptor>");
         xml.append("</md:EntityDescriptor>");
-        xml.append("</md:EntitiesDescriptor>");
         return xml.toString();
     }
 
