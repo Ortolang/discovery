@@ -104,7 +104,7 @@ public class IDPRepresentation {
         out.setAddReadTokenRoleOnCreate(false);
         out.setAuthenticateByDefault(false);
         Map<String, String> config = new HashMap<String, String>();
-        config.put("nameIDPolicyFormat", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
+        config.put("nameIDPolicyFormat", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
         config.put("singleSignOnServiceUrl", ssoURL);
         config.put("validateSignature", "false");
         config.put("signingCertificate", certificate);

@@ -41,12 +41,12 @@ public class IDPResource {
     @Path("config")
     public String getConfig() {
         StringBuffer xml = new StringBuffer();
-        xml.append("<md:EntityDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" ID=\"_666acb6d4439006afef16dfd1a338b77\" entityID=\"https://demo-auth.ortolang.fr/auth/realms/ortolang\">");
+        xml.append("<md:EntityDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" ID=\"_666acb6d4439006afef16dfd1a338b77\" entityID=\"https://demo-auth.ortolang.fr:18443/auth/realms/ortolang\">");
         xml.append("<md:SPSSODescriptor AuthnRequestsSigned=\"true\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext\">");
         int cpt = 0;
         for ( IDPRepresentation idp : service.listIDPs() ) {
             cpt++;
-            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://demo-auth.ortolang.fr/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
+            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://demo-auth.ortolang.fr:18443/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
         }
         xml.append("<md:KeyDescriptor use=\"signing\">");
         xml.append("<ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">");

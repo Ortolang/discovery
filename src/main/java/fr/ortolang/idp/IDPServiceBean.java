@@ -71,7 +71,7 @@ public class IDPServiceBean implements IDPService {
                 this.idps = handler.getIdps();
                 if ( changed ) {
                     LOGGER.log(Level.INFO, "changes detected with previous update, synchronizing keycloak idps...");
-                    KeycloakAdminClient keycloak = new KeycloakAdminClient("root", "tagada54", "ortolang", "import", "https://demo-auth.ortolang.fr/auth");
+                    KeycloakAdminClient keycloak = new KeycloakAdminClient("root", "tagada54", "ortolang", "import", "https://demo-auth.ortolang.fr:18443/auth");
                     AccessTokenResponse res = keycloak.getToken();
                     try {
                         List<IdentityProviderRepresentation> keycloakIdps = keycloak.listIdps(res);
