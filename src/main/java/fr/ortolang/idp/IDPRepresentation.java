@@ -98,13 +98,12 @@ public class IDPRepresentation {
         out.setAlias(alias);
         out.setProviderId("saml");
         out.setEnabled(true);
-        out.setUpdateProfileFirstLoginMode("off");
         out.setTrustEmail(false);
         out.setStoreToken(false);
         out.setAddReadTokenRoleOnCreate(false);
         out.setAuthenticateByDefault(false);
         Map<String, String> config = new HashMap<String, String>();
-        config.put("nameIDPolicyFormat", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        config.put("nameIDPolicyFormat", IDPConfig.getInstance().getProperty(IDPConfig.Property.NAME_ID_POLICY_FORMAT));
         config.put("singleSignOnServiceUrl", ssoURL);
         config.put("validateSignature", "false");
         config.put("signingCertificate", certificate);

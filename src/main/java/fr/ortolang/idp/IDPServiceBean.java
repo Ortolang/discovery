@@ -30,20 +30,18 @@ import fr.ortolang.idp.KeycloakAdminClient.Failure;
 public class IDPServiceBean implements IDPService {
 
     private static final Logger LOGGER = Logger.getLogger(IDPServiceBean.class.getName());
-    private static final String renaterIdps = "http://federation.renater.fr/renater/idps-renater-metadata.xml";
-    //private static final String renaterIdps = "http://federation.renater.fr/test/renater-test-metadata.xml";
-
+    
     private Map<String, IDPRepresentation> idps;
 
     public IDPServiceBean() {
         idps = Collections.emptyMap();
     }
-    
+
     @Override
     public Collection<IDPRepresentation> listIDPs() {
         return idps.values();
     }
-    
+
     @Override
     @Schedule(hour = "*", persistent = false)
     public void updateIDPs() {
@@ -51,14 +49,14 @@ public class IDPServiceBean implements IDPService {
         boolean ok = true;
         boolean changed = false;
         try {
-            URL renater = new URL(renaterIdps);
-            try (InputStream input = renater.openStream()) {
-                LOGGER.log(Level.INFO, "loading idps from renater");
+            URL url = new URL(IDPConfig.getInstance().getProperty(IDPConfig.Property.IDPS_URL));
+            try (InputStream input = url.openStream()) {
+                LOGGER.log(Level.FINE, "loading idps from wayf URL: " + url);
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 SAXParser saxParser = factory.newSAXParser();
                 IDPHandler handler = new IDPHandler();
                 saxParser.parse(input, handler);
-                LOGGER.log(Level.INFO, "renater idps loaded and parsed, calculating diff");
+                LOGGER.log(Level.FINE, "idps loaded and parsed, calculating diff");
                 for (IDPRepresentation idp : handler.getIdps().values()) {
                     if (idps.containsKey(idp.getAlias())) {
                         if (!idps.get(idp.getAlias()).equals(idp)) {
@@ -69,18 +67,23 @@ public class IDPServiceBean implements IDPService {
                     }
                 }
                 this.idps = handler.getIdps();
-                if ( changed ) {
+                if (changed) {
                     LOGGER.log(Level.INFO, "changes detected with previous update, synchronizing keycloak idps...");
-                    KeycloakAdminClient keycloak = new KeycloakAdminClient("root", "tagada54", "ortolang", "import", "https://demo-auth.ortolang.fr:18443/auth");
+                    KeycloakAdminClient keycloak = new KeycloakAdminClient(IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_USER), 
+                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_PASS), 
+                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_REALM), 
+                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_CLIENT), 
+                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_URL));
                     AccessTokenResponse res = keycloak.getToken();
                     try {
                         List<IdentityProviderRepresentation> keycloakIdps = keycloak.listIdps(res);
                         List<String> keycloakAliases = new ArrayList<String>();
-                        for ( IdentityProviderRepresentation idp : keycloakIdps ) {
+                        for (IdentityProviderRepresentation idp : keycloakIdps) {
                             keycloakAliases.add(idp.getAlias());
-                            if ( idps.containsKey(idp.getAlias()) ) {
+                            if (idps.containsKey(idp.getAlias())) {
                                 IDPRepresentation idpr = idps.get(idp.getAlias());
-                                if ( (idpr.getSsoURL() != null && !idpr.getSsoURL().equals(idp.getConfig().get("singleSignOnServiceUrl"))) || (idpr.getCertificate() != null && !idpr.getCertificate().equals(idp.getConfig().get("signingCertificate"))) ) {
+                                if ((idpr.getSsoURL() != null && !idpr.getSsoURL().equals(idp.getConfig().get("singleSignOnServiceUrl")))
+                                        || (idpr.getCertificate() != null && !idpr.getCertificate().equals(idp.getConfig().get("signingCertificate")))) {
                                     LOGGER.log(Level.FINE, "idp need update in keycloak for alias: " + idp.getAlias());
                                     try {
                                         idp.getConfig().put("singleSignOnServiceUrl", idpr.getSsoURL());
@@ -102,7 +105,7 @@ public class IDPServiceBean implements IDPService {
                             }
                         }
                         for (IDPRepresentation idp : idps.values()) {
-                            if ( !keycloakAliases.contains(idp.getAlias()) ) {
+                            if (!keycloakAliases.contains(idp.getAlias())) {
                                 LOGGER.log(Level.FINE, "idp to create in keycloak for alias: " + idp.getAlias());
                                 try {
                                     keycloak.createIDP(res, idp.toIdentityProviderRepresentation());
@@ -113,13 +116,13 @@ public class IDPServiceBean implements IDPService {
                             }
                         }
                         keycloak.logout(res);
-                        LOGGER.log(Level.INFO, "keycloak idps synchronized");
+                        LOGGER.log(Level.FINE, "keycloak idps synchronized");
                     } catch (Failure e) {
                         LOGGER.log(Level.SEVERE, "error while loading keycloak idps");
                         ok = false;
                     }
                 } else {
-                    LOGGER.log(Level.INFO, "no changes detected with previous update, nothing to do.");
+                    LOGGER.log(Level.FINE, "no changes detected with previous update, nothing to do.");
                 }
             } catch (SAXException | ParserConfigurationException | IOException e) {
                 LOGGER.log(Level.SEVERE, "unable to update local IDPs", e);

@@ -1,0 +1,10 @@
+hostname=https://auth.ortolang.fr
+key.name=auth.ortolang.fr
+key.certificate=
+keycloak.username=root
+keycloak.password=tagada54
+keycloak.realm=ortolang
+keycloak.client.name=import
+keycloak.server.url=http://auth.ortolang.fr/auth
+idps.url=http://federation.renater.fr/renater/idps-renater-metadata.xml
+name.id.policy.format=urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified

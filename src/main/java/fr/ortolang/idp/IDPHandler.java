@@ -1,5 +1,7 @@
 package fr.ortolang.idp;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -70,7 +72,13 @@ public class IDPHandler extends DefaultHandler {
             String binding = atts.getValue("Binding");
             String location = atts.getValue("Location");
             if (binding != null && binding.equals("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST")) {
-                current.setSsoURL(location);
+                try {
+                    new URL(location);
+                    current.setSsoURL(location);
+                } catch ( MalformedURLException e ) {
+                    LOGGER.log(Level.INFO, "unable to parse Single Sign On Service Location: " + location, e);
+                }
+                
             }
         }
     }
