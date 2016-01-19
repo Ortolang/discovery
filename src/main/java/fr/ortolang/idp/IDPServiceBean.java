@@ -49,7 +49,8 @@ public class IDPServiceBean implements IDPService {
         boolean ok = true;
         boolean changed = false;
         try {
-            URL url = new URL(IDPConfig.getInstance().getProperty(IDPConfig.Property.IDPS_URL));
+            String idpsurl = IDPConfig.getInstance().getProperty(IDPConfig.Property.IDPS_URL);
+            URL url = new URL(idpsurl);
             try (InputStream input = url.openStream()) {
                 LOGGER.log(Level.FINE, "loading idps from wayf URL: " + url);
                 SAXParserFactory factory = SAXParserFactory.newInstance();

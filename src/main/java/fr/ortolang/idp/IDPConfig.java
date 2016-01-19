@@ -1,5 +1,6 @@
 package fr.ortolang.idp;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,12 +24,15 @@ public class IDPConfig {
         if ( !Files.exists(home) ) {
             Files.createDirectories(home);
         }
-        LOGGER.log(Level.INFO, "ORTOLANG_HOME set to : " + home);
+        LOGGER.log(Level.INFO, "IDPS_HOME set to : " + home);
 
         props = new Properties();
         Path configFilePath = Paths.get(home.toString(), "idps.properties");
         if ( !Files.exists(configFilePath) ) {
-            Files.copy(IDPConfig.class.getClassLoader().getResourceAsStream("idps.properties"), configFilePath);
+            Files.copy(IDPConfig.class.getClassLoader().getResourceAsStream("idps.properties.sample"), configFilePath);
+        }
+        try (InputStream in = Files.newInputStream(configFilePath) ) {
+            props.load(in);
         }
     }
 
