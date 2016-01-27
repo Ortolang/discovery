@@ -45,7 +45,7 @@ public class IDPRepresentation {
 
     public void setName(String name) {
         this.name = name;
-        this.alias = name.replaceAll("/", "-");
+        this.alias = name.replaceAll("/", "-").replaceAll("'", "");
     }
 
     public String getDescription() {
