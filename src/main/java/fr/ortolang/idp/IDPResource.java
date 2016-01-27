@@ -16,7 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
 @Path("/")
 @RequestScoped
@@ -47,7 +46,8 @@ public class IDPResource {
         int cpt = 0;
         for ( IDPRepresentation idp : service.listIDPs() ) {
             cpt++;
-            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"" + UriBuilder.fromUri(IDPConfig.getInstance().getProperty(IDPConfig.Property.HOSTNAME) + "/auth/realms/ortolang/broker/" + idp.getAlias() + "/endpoint").build()).append("\" index=\"").append(cpt).append("\"/>");
+            //xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"" + UriBuilder.fromUri(IDPConfig.getInstance().getProperty(IDPConfig.Property.HOSTNAME) + "/auth/realms/ortolang/broker/" + idp.getAlias() + "/endpoint").build()).append("\" index=\"").append(cpt).append("\"/>");
+            xml.append("<md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"").append(IDPConfig.getInstance().getProperty(IDPConfig.Property.HOSTNAME)).append("/auth/realms/ortolang/broker/").append(idp.getAlias()).append("/endpoint\" index=\"").append(cpt).append("\"/>");
         }
         xml.append("<md:KeyDescriptor use=\"signing\">");
         xml.append("<ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">");
