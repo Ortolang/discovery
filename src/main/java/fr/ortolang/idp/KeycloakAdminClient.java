@@ -22,6 +22,7 @@ import org.keycloak.adapters.HttpClientBuilder;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.IdentityProviderMapperRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.util.JsonSerialization;
 
@@ -42,7 +43,11 @@ public class KeycloakAdminClient {
     }
     
     @SuppressWarnings("serial")
-    static class TypedList extends ArrayList<IdentityProviderRepresentation> {
+    static class IdPTypedList extends ArrayList<IdentityProviderRepresentation> {
+    }
+    
+    @SuppressWarnings("serial")
+    static class IdPMapperTypedList extends ArrayList<IdentityProviderMapperRepresentation> {
     }
 
     @SuppressWarnings("serial")
@@ -148,7 +153,7 @@ public class KeycloakAdminClient {
                 HttpEntity entity = response.getEntity();
                 InputStream is = entity.getContent();
                 try {
-                    return JsonSerialization.readValue(is, TypedList.class);
+                    return JsonSerialization.readValue(is, IdPTypedList.class);
                 } finally {
                     is.close();
                 }
@@ -159,7 +164,7 @@ public class KeycloakAdminClient {
             client.getConnectionManager().shutdown();
         }
     }
-
+    
     public void createIDP(AccessTokenResponse res, IdentityProviderRepresentation idp) throws Failure {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
@@ -225,11 +230,122 @@ public class KeycloakAdminClient {
             client.getConnectionManager().shutdown();
         }
     }
-
+    
     public void deleteIDP(AccessTokenResponse res, String alias) throws Failure {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
             HttpDelete delete = new HttpDelete(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias);
+            delete.addHeader("Authorization", "Bearer " + res.getToken());
+            delete.addHeader("Content-type", "application/json");
+            try {
+                HttpResponse response = client.execute(delete);
+                if (response.getStatusLine().getStatusCode() != 204) {
+                    throw new Failure(response.getStatusLine().getStatusCode());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+    }
+    
+    public List<IdentityProviderMapperRepresentation> listIdpMappers(AccessTokenResponse res, String alias) throws Failure {
+        HttpClient client = new HttpClientBuilder().disableTrustManager().build();
+        try {
+            HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers");
+            get.addHeader("Authorization", "Bearer " + res.getToken());
+            get.addHeader("Content-type", "application/json");
+            try {
+                HttpResponse response = client.execute(get);
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new Failure(response.getStatusLine().getStatusCode());
+                }
+                HttpEntity entity = response.getEntity();
+                InputStream is = entity.getContent();
+                try {
+                    return JsonSerialization.readValue(is, IdPMapperTypedList.class);
+                } finally {
+                    is.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+    }
+    
+    public void createIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure {
+        HttpClient client = new HttpClientBuilder().disableTrustManager().build();
+        try {
+            HttpPost post = new HttpPost(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers");
+            post.addHeader("Authorization", "Bearer " + res.getToken());
+            post.addHeader("Content-type", "application/json");
+            try {
+                post.setEntity(new StringEntity(JsonSerialization.writeValueAsString(idp), "UTF-8"));
+                HttpResponse response = client.execute(post);
+                if (response.getStatusLine().getStatusCode() != 201) {
+                    throw new Failure(response.getStatusLine().getStatusCode());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+    }
+
+    public IdentityProviderMapperRepresentation getIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure {
+        HttpClient client = new HttpClientBuilder().disableTrustManager().build();
+        try {
+            try {
+                HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id);
+                get.addHeader("Authorization", "Bearer " + res.getToken());
+                get.addHeader("Content-type", "application/json");
+                HttpResponse response = client.execute(get);
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new Failure(response.getStatusLine().getStatusCode());
+                }
+                HttpEntity entity = response.getEntity();
+                InputStream is = entity.getContent();
+                try {
+                    return JsonSerialization.readValue(is, IdentityProviderMapperRepresentation.class);
+                } finally {
+                    is.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+    }
+
+    public void updateIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure {
+        HttpClient client = new HttpClientBuilder().disableTrustManager().build();
+        try {
+            HttpPut put = new HttpPut(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + idp.getId());
+            put.addHeader("Authorization", "Bearer " + res.getToken());
+            put.addHeader("Content-type", "application/json");
+            try {
+                put.setEntity(new StringEntity(JsonSerialization.writeValueAsString(idp), "UTF-8"));
+                HttpResponse response = client.execute(put);
+                if (response.getStatusLine().getStatusCode() != 204) {
+                    throw new Failure(response.getStatusLine().getStatusCode());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+    }
+    
+    public void deleteIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure {
+        HttpClient client = new HttpClientBuilder().disableTrustManager().build();
+        try {
+            HttpDelete delete = new HttpDelete(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id);
             delete.addHeader("Authorization", "Bearer " + res.getToken());
             delete.addHeader("Content-type", "application/json");
             try {

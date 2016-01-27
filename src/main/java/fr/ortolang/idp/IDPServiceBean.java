@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.IdentityProviderMapperRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.xml.sax.SAXException;
 
@@ -102,7 +104,7 @@ public class IDPServiceBean implements IDPService {
                                 } catch (Failure e) {
                                     LOGGER.log(Level.SEVERE, "error while deleting keycloak idp with alias: " + idp.getAlias());
                                     ok = false;
-                                }
+                                } 
                             }
                         }
                         for (IDPRepresentation idp : idps.values()) {
@@ -110,6 +112,20 @@ public class IDPServiceBean implements IDPService {
                                 LOGGER.log(Level.FINE, "idp to create in keycloak for alias: " + idp.getAlias());
                                 try {
                                     keycloak.createIDP(res, idp.toIdentityProviderRepresentation());
+                                    IdentityProviderMapperRepresentation esrMapper = new IdentityProviderMapperRepresentation();
+                                    esrMapper.setName("ESR role enforced for renater users");
+                                    esrMapper.setIdentityProviderMapper("oidc-hardcoded-role-idp-mapper");
+                                    Map<String, String> esrMapperConfig = new HashMap<String, String>();
+                                    esrMapperConfig.put("role", "esr");
+                                    esrMapper.setConfig(esrMapperConfig);
+                                    keycloak.createIDPMapper(res, idp.getAlias(), esrMapper);
+                                    IdentityProviderMapperRepresentation principalMapper = new IdentityProviderMapperRepresentation();
+                                    principalMapper.setName("eduPersonPrincipalName as Username");
+                                    principalMapper.setIdentityProviderMapper("saml-username-idp-mapper");
+                                    Map<String, String> principalMapperConfig = new HashMap<String, String>();
+                                    principalMapperConfig.put("template", "${ATTRIBUTE.eduPersonPrincipalName}");
+                                    principalMapper.setConfig(principalMapperConfig);
+                                    keycloak.createIDPMapper(res, idp.getAlias(), principalMapper);
                                 } catch (Failure e) {
                                     LOGGER.log(Level.SEVERE, "error while creating keycloak idp with alias: " + idp.getAlias());
                                     ok = false;

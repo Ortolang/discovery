@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 
 @XmlRootElement(name = "idp")
@@ -33,15 +32,11 @@ public class IDPRepresentation {
 
     public void setEntityId(String entityId) {
         this.entityId = entityId;
-        this.alias = DigestUtils.md5Hex(entityId);
+        //this.alias = DigestUtils.md5Hex(entityId);
     }
 
     public String getAlias() {
         return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
     }
 
     public String getName() {
@@ -50,6 +45,7 @@ public class IDPRepresentation {
 
     public void setName(String name) {
         this.name = name;
+        this.alias = name;
     }
 
     public String getDescription() {
