@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>renater-idps</artifactId>
-	<version>4.0.8-SNAPSHOT</version>
+	<version>4.0.8</version>
 	<name>Ortolang Renater IDPs Integration</name>
 	<url>http://www.ortolang.org</url>
 	<packaging>war</packaging>
@@ -17,7 +17,7 @@
 		<connection>scm:git:git@forge.ortolang.fr:ortolang-renater.git</connection>
 		<developerConnection>scm:git:git@forge.ortolang.fr:ortolang-renater.git</developerConnection>
 		<url>http://git.ortolang.fr/ortolang-renater.git/</url>
-		<tag>HEAD</tag>
+		<tag>renater-idps-4.0.8</tag>
 	</scm>
 
 	<properties>
