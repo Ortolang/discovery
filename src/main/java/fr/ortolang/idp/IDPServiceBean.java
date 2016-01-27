@@ -32,7 +32,7 @@ import fr.ortolang.idp.KeycloakAdminClient.Failure;
 public class IDPServiceBean implements IDPService {
 
     private static final Logger LOGGER = Logger.getLogger(IDPServiceBean.class.getName());
-    
+
     private Map<String, IDPRepresentation> idps;
 
     public IDPServiceBean() {
@@ -72,15 +72,25 @@ public class IDPServiceBean implements IDPService {
                 this.idps = handler.getIdps();
                 if (changed) {
                     LOGGER.log(Level.INFO, "changes detected with previous update, synchronizing keycloak idps...");
-                    KeycloakAdminClient keycloak = new KeycloakAdminClient(IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_USER), 
-                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_PASS), 
-                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_REALM), 
-                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_CLIENT), 
-                            IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_URL));
+                    KeycloakAdminClient keycloak = new KeycloakAdminClient(IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_USER), IDPConfig.getInstance().getProperty(
+                            IDPConfig.Property.KEYCLOAK_PASS), IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_REALM), IDPConfig.getInstance().getProperty(
+                            IDPConfig.Property.KEYCLOAK_CLIENT), IDPConfig.getInstance().getProperty(IDPConfig.Property.KEYCLOAK_URL));
                     AccessTokenResponse res = keycloak.getToken();
                     try {
                         List<IdentityProviderRepresentation> keycloakIdps = keycloak.listIdps(res);
                         List<String> keycloakAliases = new ArrayList<String>();
+                        IdentityProviderMapperRepresentation esrMapper = new IdentityProviderMapperRepresentation();
+                        esrMapper.setName("ESR role enforced for renater users");
+                        esrMapper.setIdentityProviderMapper("oidc-hardcoded-role-idp-mapper");
+                        Map<String, String> esrMapperConfig = new HashMap<String, String>();
+                        esrMapperConfig.put("role", "esr");
+                        esrMapper.setConfig(esrMapperConfig);
+                        IdentityProviderMapperRepresentation principalMapper = new IdentityProviderMapperRepresentation();
+                        principalMapper.setName("eduPersonPrincipalName as Username");
+                        principalMapper.setIdentityProviderMapper("saml-username-idp-mapper");
+                        Map<String, String> principalMapperConfig = new HashMap<String, String>();
+                        principalMapperConfig.put("template", "${ATTRIBUTE.eduPersonPrincipalName}");
+                        principalMapper.setConfig(principalMapperConfig);
                         for (IdentityProviderRepresentation idp : keycloakIdps) {
                             keycloakAliases.add(idp.getAlias());
                             if (idps.containsKey(idp.getAlias())) {
@@ -93,18 +103,32 @@ public class IDPServiceBean implements IDPService {
                                         idp.getConfig().put("signingCertificate", idpr.getCertificate());
                                         keycloak.updateIDP(res, idp.getAlias(), idp);
                                     } catch (Failure e) {
-                                        LOGGER.log(Level.SEVERE, "error while updating keycloak idp with alias: " + idp.getAlias());
+                                        LOGGER.log(Level.SEVERE, "error while updating keycloak idp with alias: " + idp.getAlias(), e);
                                         ok = false;
                                     }
                                 }
+                                try {
+                                    List<IdentityProviderMapperRepresentation> mappers = keycloak.listIdpMappers(res, idp.getAlias());
+                                    if (mappers.size() == 0) {
+                                        LOGGER.log(Level.FINE, "creating mappers for idp with alias: " + idp.getAlias());
+                                        esrMapper.setIdentityProviderAlias(idp.getAlias());
+                                        principalMapper.setIdentityProviderAlias(idp.getAlias());
+                                        keycloak.createIDPMapper(res, idp.getAlias(), esrMapper);
+                                        keycloak.createIDPMapper(res, idp.getAlias(), principalMapper);
+                                    }
+                                } catch (Failure e) {
+                                    LOGGER.log(Level.SEVERE, "error while updating keycloak idp mappers with alias: " + idp.getAlias(), e);
+                                    ok = false;
+                                }
+
                             } else {
                                 LOGGER.log(Level.FINE, "idp to delete in keycloak for alias: " + idp.getAlias());
                                 try {
                                     keycloak.deleteIDP(res, idp.getAlias());
                                 } catch (Failure e) {
-                                    LOGGER.log(Level.SEVERE, "error while deleting keycloak idp with alias: " + idp.getAlias());
+                                    LOGGER.log(Level.SEVERE, "error while deleting keycloak idp with alias: " + idp.getAlias(), e);
                                     ok = false;
-                                } 
+                                }
                             }
                         }
                         for (IDPRepresentation idp : idps.values()) {
@@ -112,22 +136,12 @@ public class IDPServiceBean implements IDPService {
                                 LOGGER.log(Level.FINE, "idp to create in keycloak for alias: " + idp.getAlias());
                                 try {
                                     keycloak.createIDP(res, idp.toIdentityProviderRepresentation());
-                                    IdentityProviderMapperRepresentation esrMapper = new IdentityProviderMapperRepresentation();
-                                    esrMapper.setName("ESR role enforced for renater users");
-                                    esrMapper.setIdentityProviderMapper("oidc-hardcoded-role-idp-mapper");
-                                    Map<String, String> esrMapperConfig = new HashMap<String, String>();
-                                    esrMapperConfig.put("role", "esr");
-                                    esrMapper.setConfig(esrMapperConfig);
+                                    esrMapper.setIdentityProviderAlias(idp.getAlias());
+                                    principalMapper.setIdentityProviderAlias(idp.getAlias());
                                     keycloak.createIDPMapper(res, idp.getAlias(), esrMapper);
-                                    IdentityProviderMapperRepresentation principalMapper = new IdentityProviderMapperRepresentation();
-                                    principalMapper.setName("eduPersonPrincipalName as Username");
-                                    principalMapper.setIdentityProviderMapper("saml-username-idp-mapper");
-                                    Map<String, String> principalMapperConfig = new HashMap<String, String>();
-                                    principalMapperConfig.put("template", "${ATTRIBUTE.eduPersonPrincipalName}");
-                                    principalMapper.setConfig(principalMapperConfig);
                                     keycloak.createIDPMapper(res, idp.getAlias(), principalMapper);
                                 } catch (Failure e) {
-                                    LOGGER.log(Level.SEVERE, "error while creating keycloak idp with alias: " + idp.getAlias());
+                                    LOGGER.log(Level.SEVERE, "error while creating keycloak idp with alias: " + idp.getAlias(), e);
                                     ok = false;
                                 }
                             }
@@ -135,7 +149,7 @@ public class IDPServiceBean implements IDPService {
                         keycloak.logout(res);
                         LOGGER.log(Level.FINE, "keycloak idps synchronized");
                     } catch (Failure e) {
-                        LOGGER.log(Level.SEVERE, "error while loading keycloak idps");
+                        LOGGER.log(Level.SEVERE, "error while loading keycloak idps", e);
                         ok = false;
                     }
                 } else {

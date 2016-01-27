@@ -3,8 +3,11 @@ package fr.ortolang.idp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -142,7 +145,7 @@ public class KeycloakAdminClient {
     public List<IdentityProviderRepresentation> listIdps(AccessTokenResponse res) throws Failure {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances");
+            HttpGet get = new HttpGet(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances").build());
             get.addHeader("Authorization", "Bearer " + res.getToken());
             get.addHeader("Content-type", "application/json");
             try {
@@ -168,7 +171,7 @@ public class KeycloakAdminClient {
     public void createIDP(AccessTokenResponse res, IdentityProviderRepresentation idp) throws Failure {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpPost post = new HttpPost(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances");
+            HttpPost post = new HttpPost(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances").build());
             post.addHeader("Authorization", "Bearer " + res.getToken());
             post.addHeader("Content-type", "application/json");
             try {
@@ -185,11 +188,11 @@ public class KeycloakAdminClient {
         }
     }
 
-    public IdentityProviderRepresentation getIDP(AccessTokenResponse res, String alias) throws Failure {
+    public IdentityProviderRepresentation getIDP(AccessTokenResponse res, String alias) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
             try {
-                HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias);
+                HttpGet get = new HttpGet(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias).build());
                 get.addHeader("Authorization", "Bearer " + res.getToken());
                 get.addHeader("Content-type", "application/json");
                 HttpResponse response = client.execute(get);
@@ -211,10 +214,10 @@ public class KeycloakAdminClient {
         }
     }
 
-    public void updateIDP(AccessTokenResponse res, String alias, IdentityProviderRepresentation idp) throws Failure {
+    public void updateIDP(AccessTokenResponse res, String alias, IdentityProviderRepresentation idp) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpPut put = new HttpPut(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias);
+            HttpPut put = new HttpPut(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias).build());
             put.addHeader("Authorization", "Bearer " + res.getToken());
             put.addHeader("Content-type", "application/json");
             try {
@@ -231,10 +234,10 @@ public class KeycloakAdminClient {
         }
     }
     
-    public void deleteIDP(AccessTokenResponse res, String alias) throws Failure {
+    public void deleteIDP(AccessTokenResponse res, String alias) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpDelete delete = new HttpDelete(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias);
+            HttpDelete delete = new HttpDelete(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias).build());
             delete.addHeader("Authorization", "Bearer " + res.getToken());
             delete.addHeader("Content-type", "application/json");
             try {
@@ -250,10 +253,10 @@ public class KeycloakAdminClient {
         }
     }
     
-    public List<IdentityProviderMapperRepresentation> listIdpMappers(AccessTokenResponse res, String alias) throws Failure {
+    public List<IdentityProviderMapperRepresentation> listIdpMappers(AccessTokenResponse res, String alias) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers");
+            HttpGet get = new HttpGet(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers").build());
             get.addHeader("Authorization", "Bearer " + res.getToken());
             get.addHeader("Content-type", "application/json");
             try {
@@ -276,10 +279,10 @@ public class KeycloakAdminClient {
         }
     }
     
-    public void createIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure {
+    public void createIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpPost post = new HttpPost(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers");
+            HttpPost post = new HttpPost(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers").build());
             post.addHeader("Authorization", "Bearer " + res.getToken());
             post.addHeader("Content-type", "application/json");
             try {
@@ -296,11 +299,11 @@ public class KeycloakAdminClient {
         }
     }
 
-    public IdentityProviderMapperRepresentation getIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure {
+    public IdentityProviderMapperRepresentation getIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
             try {
-                HttpGet get = new HttpGet(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id);
+                HttpGet get = new HttpGet(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id).build());
                 get.addHeader("Authorization", "Bearer " + res.getToken());
                 get.addHeader("Content-type", "application/json");
                 HttpResponse response = client.execute(get);
@@ -322,10 +325,10 @@ public class KeycloakAdminClient {
         }
     }
 
-    public void updateIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure {
+    public void updateIDPMapper(AccessTokenResponse res, String alias, IdentityProviderMapperRepresentation idp) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpPut put = new HttpPut(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + idp.getId());
+            HttpPut put = new HttpPut(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + idp.getId()).build());
             put.addHeader("Authorization", "Bearer " + res.getToken());
             put.addHeader("Content-type", "application/json");
             try {
@@ -342,10 +345,10 @@ public class KeycloakAdminClient {
         }
     }
     
-    public void deleteIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure {
+    public void deleteIDPMapper(AccessTokenResponse res, String alias, String id) throws Failure, UnsupportedEncodingException {
         HttpClient client = new HttpClientBuilder().disableTrustManager().build();
         try {
-            HttpDelete delete = new HttpDelete(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id);
+            HttpDelete delete = new HttpDelete(UriBuilder.fromUri(baseUrl + "/admin/realms/" + realm + "/identity-provider/instances/" + alias + "/mappers/" + id).build());
             delete.addHeader("Authorization", "Bearer " + res.getToken());
             delete.addHeader("Content-type", "application/json");
             try {
