@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -29,6 +31,7 @@ import fr.ortolang.idp.KeycloakAdminClient.Failure;
 
 @Singleton
 @Startup
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class IDPServiceBean implements IDPService {
 
     private static final Logger LOGGER = Logger.getLogger(IDPServiceBean.class.getName());
