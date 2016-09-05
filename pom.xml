@@ -1,28 +1,27 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>renater-idps</artifactId>
-	<version>4.1.2-SNAPSHOT</version>
-	<name>Ortolang Renater IDPs Integration</name>
+	<artifactId>discovery</artifactId>
+	<version>5.0.0-SNAPSHOT</version>
+	<name>Ortolang Shibboleth Discovery Service</name>
 	<url>http://www.ortolang.org</url>
 	<packaging>war</packaging>
 
 	<parent>
 		<groupId>fr.ortolang</groupId>
 		<artifactId>ortolang</artifactId>
-		<version>4</version>
+		<version>8</version>
 	</parent>
 
 	<scm>
-		<connection>scm:git:git@forge.ortolang.fr:ortolang-renater.git</connection>
-		<developerConnection>scm:git:git@forge.ortolang.fr:ortolang-renater.git</developerConnection>
-		<url>http://git.ortolang.fr/ortolang-renater.git/</url>
+		<connection>scm:git:git@gitlab.ortolang.fr:ortolang-discovery.git</connection>
+		<developerConnection>scm:git:git@gitlab.ortolang.fr:ortolang-dicovery.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<version.keycloak>1.7.0.Final</version.keycloak>
+		<version.keycloak>2.1.0.Final</version.keycloak>
 		<version.wildfly>9.0.1.Final</version.wildfly>
 		<version.javax.javaee>7.0</version.javax.javaee>
 		<version.commons.codec>1.10</version.commons.codec>
