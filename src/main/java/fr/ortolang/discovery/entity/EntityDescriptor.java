@@ -1,4 +1,4 @@
-package fr.ortolang.idp;
+package fr.ortolang.discovery.entity;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -11,9 +11,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 
+import fr.ortolang.discovery.DiscoveryConfig;
+
 @XmlRootElement(name = "idp")
-@XmlType(name = "idp", propOrder = { "entityId", "alias", "name", "description", "registrationDate", "ssoURL", "logo" })
-public class IDPRepresentation {
+@XmlType(name = "idp")
+public class EntityDescriptor {
 
     private String entityId;
     private String alias;
@@ -24,7 +26,7 @@ public class IDPRepresentation {
     private Date registrationDate;
     private String ssoURL;
 
-    public IDPRepresentation() {
+    public EntityDescriptor() {
     }
 
     public String getEntityId() {
@@ -38,6 +40,10 @@ public class IDPRepresentation {
 
     public String getAlias() {
         return alias;
+    }
+    
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getName() {
@@ -100,7 +106,7 @@ public class IDPRepresentation {
         out.setAddReadTokenRoleOnCreate(false);
         out.setAuthenticateByDefault(false);
         Map<String, String> config = new HashMap<String, String>();
-        config.put("nameIDPolicyFormat", IDPConfig.getInstance().getProperty(IDPConfig.Property.NAME_ID_POLICY_FORMAT));
+        config.put("nameIDPolicyFormat", DiscoveryConfig.getInstance().getProperty(DiscoveryConfig.Property.NAME_ID_POLICY_FORMAT));
         config.put("singleSignOnServiceUrl", ssoURL);
         config.put("validateSignature", "false");
         config.put("signingCertificate", certificate);
@@ -145,7 +151,7 @@ public class IDPRepresentation {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        IDPRepresentation other = (IDPRepresentation) obj;
+        EntityDescriptor other = (EntityDescriptor) obj;
         if (certificate == null) {
             if (other.certificate != null)
                 return false;

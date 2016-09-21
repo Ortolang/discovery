@@ -1,8 +1,8 @@
-package fr.ortolang.idp;
+package fr.ortolang.discovery.resource;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 @ApplicationPath("/")
-public class IDPApplication extends Application {
+public class DiscoveryApplication extends Application {
 }

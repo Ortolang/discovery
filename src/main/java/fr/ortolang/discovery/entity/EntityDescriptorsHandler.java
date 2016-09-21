@@ -1,4 +1,4 @@
-package fr.ortolang.idp;
+package fr.ortolang.discovery.entity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,21 +13,21 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class IDPHandler extends DefaultHandler {
+public class EntityDescriptorsHandler extends DefaultHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(IDPHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EntityDescriptorsHandler.class.getName());
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    private Map<String, IDPRepresentation> idps;
-    private IDPRepresentation current;
+    private Map<String, EntityDescriptor> idps;
+    private EntityDescriptor current;
     private boolean read = false;
     private StringBuffer buffer = new StringBuffer();
 
-    public IDPHandler() {
-        idps = new HashMap<String, IDPRepresentation>();
+    public EntityDescriptorsHandler() {
+        idps = new HashMap<String, EntityDescriptor>();
     }
 
-    public Map<String, IDPRepresentation> getIdps() {
+    public Map<String, EntityDescriptor> getIdps() {
         return idps;
     }
 
@@ -37,7 +37,7 @@ public class IDPHandler extends DefaultHandler {
             String entityId = atts.getValue("entityID");
             if (entityId != null) {
                 LOGGER.log(Level.FINEST, "Found new entity descriptor with entity ID: " + entityId);
-                current = new IDPRepresentation();
+                current = new EntityDescriptor();
                 current.setEntityId(entityId);
             }
         }
