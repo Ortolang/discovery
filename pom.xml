@@ -14,8 +14,8 @@
 	</parent>
 
 	<scm>
-		<connection>scm:git:git@gitlab.ortolang.fr:ortolang-discovery.git</connection>
-		<developerConnection>scm:git:git@gitlab.ortolang.fr:ortolang-dicovery.git</developerConnection>
+		<connection>scm:git:git@gitlab.ortolang.fr:ortolang/ortolang-discovery.git</connection>
+		<developerConnection>scm:git:git@gitlab.ortolang.fr:ortolang/ortolang-dicovery.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
