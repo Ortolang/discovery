@@ -15,7 +15,7 @@
 
 	<scm>
 		<connection>scm:git:git@gitlab.ortolang.fr:ortolang/ortolang-discovery.git</connection>
-		<developerConnection>scm:git:git@gitlab.ortolang.fr:ortolang/ortolang-dicovery.git</developerConnection>
+		<developerConnection>scm:git:git@gitlab.ortolang.fr:ortolang/ortolang-discovery.git</developerConnection>
 		<tag>discovery-5.0.0</tag>
 	</scm>
 
