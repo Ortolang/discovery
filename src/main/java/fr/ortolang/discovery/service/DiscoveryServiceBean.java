@@ -65,7 +65,18 @@ public class DiscoveryServiceBean implements DiscoveryService {
                 SAXParser saxParser = factory.newSAXParser();
                 EntityDescriptorsHandler handler = new EntityDescriptorsHandler();
                 saxParser.parse(input, handler);
-                LOGGER.log(Level.FINE, "entities loaded and parsed.");
+                LOGGER.log(Level.FINE, "entities loaded and parsed, calculating diff");
+                for (EntityDescriptor entity : handler.getIdps().values()) {
+                    if (entities.containsKey(entity.getAlias())) {
+                        if (!entities.get(entity.getAlias()).equals(entity)) {
+                            changed = true;
+                            break;
+                        }
+                    } else {
+                        changed = true;
+                        break;
+                    }
+                }
                 this.entities = handler.getIdps();
                 if (changed) {
                     LOGGER.log(Level.INFO, "changes detected with previous update, synchronizing keycloak idps...");
