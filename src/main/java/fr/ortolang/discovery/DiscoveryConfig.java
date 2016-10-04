@@ -71,7 +71,8 @@ public class DiscoveryConfig {
         KEYCLOAK_CLIENT ("keycloak.client.name"),
         KEYCLOAK_URL ("keycloak.server.url"),
         WAYF_URL ("wayf.url"),
-        NAME_ID_POLICY_FORMAT ("name.id.policy.format");
+        NAME_ID_POLICY_FORMAT ("name.id.policy.format"),
+        MODE ("mode");
         
         private final String key;
 

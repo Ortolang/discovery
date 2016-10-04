@@ -17,15 +17,16 @@ import javax.ws.rs.core.Context;
 import org.opensaml.Configuration;
 import org.opensaml.saml2.binding.artifact.AbstractSAML2Artifact;
 
-@Path("/sso")
+@Path("/proxy")
 @RequestScoped
-public class SAMLResource {
+public class ProxyResource {
     
-    private static final Logger LOGGER = Logger.getLogger(SAMLResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProxyResource.class.getName());
     
     @GET
+    @Path("/sso")
     public void authRequest(@Context HttpServletRequest request, @Context HttpServletResponse response, @QueryParam("SAMLRequest") String authnRequest, @QueryParam("RelayState") String relayState) {
-        LOGGER.log(Level.INFO, "GET /sso");
+        LOGGER.log(Level.INFO, "GET /proxy/sso");
         
         AbstractSAML2Artifact artefact = Configuration.getSAML2ArtifactBuilderFactory().buildArtifact(authnRequest);
         
@@ -35,7 +36,7 @@ public class SAMLResource {
     @POST
     @Path("/endpoint")
     public void forwardCallback(@Context HttpServletRequest request, @Context HttpServletResponse response) {
-        LOGGER.log(Level.INFO, "POST /sso/endpoint");
+        LOGGER.log(Level.INFO, "POST /proxy/endpoint");
         //TODO forward the authn response to keycloak
         dumpRequest(request);
     }
