@@ -98,7 +98,6 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>${version.httpclient}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.opensaml</groupId>
