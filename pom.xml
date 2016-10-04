@@ -21,7 +21,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<version.keycloak>2.1.0.Final</version.keycloak>
+		<version.keycloak>2.2.1.Final</version.keycloak>
 		<version.wildfly>10.1.0.Final</version.wildfly>
 		<version.javax.javaee>7.0</version.javax.javaee>
 		<version.commons.codec>1.10</version.commons.codec>

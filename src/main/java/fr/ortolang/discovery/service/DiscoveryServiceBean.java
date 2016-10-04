@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import fr.ortolang.discovery.DiscoveryConfig;
 import fr.ortolang.discovery.entity.EntityDescriptor;
 import fr.ortolang.discovery.entity.EntityDescriptorsHandler;
+import fr.ortolang.discovery.keycloak.KeycloakSynchronizer;
 
 @Singleton
 @Startup
@@ -38,10 +39,10 @@ public class DiscoveryServiceBean implements DiscoveryService {
     public DiscoveryServiceBean() {
         entities = Collections.emptyMap();
     }
-    
+
     @PostConstruct
     public void setup() {
-         this.update();   
+        this.update();
     }
 
     @Override
@@ -54,6 +55,7 @@ public class DiscoveryServiceBean implements DiscoveryService {
     public void update() {
         LOGGER.log(Level.INFO, "Updating entities");
         boolean ok = true;
+        boolean changed = false;
         try {
             String idpsurl = DiscoveryConfig.getInstance().getProperty(DiscoveryConfig.Property.WAYF_URL);
             URL url = new URL(idpsurl);
@@ -65,6 +67,15 @@ public class DiscoveryServiceBean implements DiscoveryService {
                 saxParser.parse(input, handler);
                 LOGGER.log(Level.FINE, "entities loaded and parsed.");
                 this.entities = handler.getIdps();
+                if (changed) {
+                    LOGGER.log(Level.INFO, "changes detected with previous update, synchronizing keycloak idps...");
+                    KeycloakSynchronizer keycloak = new KeycloakSynchronizer(DiscoveryConfig.getInstance().getProperty(DiscoveryConfig.Property.KEYCLOAK_USER), DiscoveryConfig.getInstance()
+                            .getProperty(DiscoveryConfig.Property.KEYCLOAK_PASS), DiscoveryConfig.getInstance().getProperty(DiscoveryConfig.Property.KEYCLOAK_REALM), DiscoveryConfig.getInstance()
+                            .getProperty(DiscoveryConfig.Property.KEYCLOAK_CLIENT), DiscoveryConfig.getInstance().getProperty(DiscoveryConfig.Property.KEYCLOAK_URL));
+                    ok = keycloak.synchronize(entities);
+                } else {
+                    LOGGER.log(Level.FINE, "no changes detected with previous update, nothing to do.");
+                }
             } catch (SAXException | ParserConfigurationException | IOException e) {
                 LOGGER.log(Level.SEVERE, "unable to update local entities", e);
                 ok = false;
@@ -80,5 +91,4 @@ public class DiscoveryServiceBean implements DiscoveryService {
             LOGGER.log(Level.INFO, "entities updated");
         }
     }
-
 }
