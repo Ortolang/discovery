@@ -17,6 +17,10 @@ RUN yum install -y gettext
 
 USER jboss
 
+# Add weld extension and subsystem
+COPY src/main/docker/config-keycloak.cli /tmp/
+RUN /opt/jboss/keycloak/bin/jboss-cli.sh --file=/tmp/config-keycloak.cli
+
 RUN mkdir /opt/jboss/.ortolang
 COPY --chown=jboss:jboss src/main/resources/discovery.properties.sample /opt/jboss/.ortolang/discovery.properties
 

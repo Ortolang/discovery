@@ -1,0 +1,11 @@
+embed-server --std-out=echo
+
+batch
+/extension=org.jboss.as.weld:add
+run-batch
+
+batch
+/subsystem=weld:add
+run-batch
+
+stop-embedded-server
