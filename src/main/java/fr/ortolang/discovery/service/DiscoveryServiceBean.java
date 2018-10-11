@@ -78,7 +78,6 @@ public class DiscoveryServiceBean implements DiscoveryService {
 
     @PostConstruct
     public void setup() {
-        this.update();
     }
 
     @Override
