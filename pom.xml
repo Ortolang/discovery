@@ -32,7 +32,7 @@
     <repositories>
         <repository>
             <id>ortolang-maven-repository</id>
-            <url>https://maven.ortolang.fr/public/</url>
+            <url>https://maven.ortolang.fr/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -45,7 +45,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>ortolang-maven-repository</id>
-            <url>https://maven.ortolang.fr/public/</url>
+            <url>https://maven.ortolang.fr/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
